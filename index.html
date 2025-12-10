@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Product Document Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Your CSS file -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>Product Document Generator</h1>
+      <p class="app-subtitle">
+        Turn scribbles into PRDs, MoM, One-Pagers, and experiment summaries.
+      </p>
+    </header>
+
+    <section class="controls">
+      <div class="field">
+        <label for="docType">Document type</label>
+        <select id="docType">
+          <option value="prd">PRD</option>
+          <option value="mom">MoM</option>
+          <option value="onepager">One-Pager</option>
+          <option value="experiment">Experiment Summary</option>
+        </select>
+      </div>
+    </section>
+
+    <main class="layout">
+      <section class="card form-card">
+        <h2>Inputs</h2>
+        <div id="form"></div>
+        <div class="actions-row">
+          <button id="generate" class="primary-btn">Generate</button>
+          <span id="status" class="status"></span>
+        </div>
+      </section>
+
+      <section class="card output-card">
+        <div class="output-header">
+          <h2>Output</h2>
+          <button id="copyOutput" class="secondary-btn">Copy</button>
+        </div>
+        <pre id="output"></pre>
+      </section>
+    </main>
+  </div>
+
+  <!-- Your JS file -->
+  <script src="script.js"></script>
+</body>
+</html>
