@@ -2,19 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Product Document Generator</title>
+  <title>Franky’s Doc Maker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Your CSS file -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
   <div class="app">
     <header class="app-header">
-      <h1>Product Document Generator</h1>
+      <h1>Franky’s Doc Maker</h1>
       <p class="app-subtitle">
-        Turn scribbles into PRDs, MoM, One-Pagers, and experiment summaries.
+        Turn scribbles into PRDs, MoM, One-Pagers, and experiment summaries you can paste straight into Lark.
       </p>
     </header>
 
@@ -22,10 +21,10 @@
       <div class="field">
         <label for="docType">Document type</label>
         <select id="docType">
-          <option value="prd">PRD</option>
-          <option value="mom">MoM</option>
-          <option value="onepager">One-Pager</option>
-          <option value="experiment">Experiment Summary</option>
+          <option value="prd">PRD – Product Requirements Document</option>
+          <option value="mom">MoM – Minutes of Meeting</option>
+          <option value="onepager">One-Pager – Product Brief</option>
+          <option value="experiment">Experiment Summary – Post-Experiment Review</option>
         </select>
       </div>
     </section>
@@ -48,9 +47,12 @@
         <pre id="output"></pre>
       </section>
     </main>
+
+    <footer class="app-footer">
+      <p>Vibe-coded by @frnkygabriel</p>
+    </footer>
   </div>
 
-  <!-- Your JS file -->
   <script src="script.js"></script>
 </body>
 </html>
