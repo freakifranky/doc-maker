@@ -1,3 +1,6 @@
+// promptBuilder.js
+// Builds the USER prompt for the LLM based on doc type + raw answers.
+
 export function buildPromptForType(docType, a) {
   // PRD
   if (docType === "prd") {
@@ -25,7 +28,6 @@ Formatting rules for user stories:
 - Notes = extra context, open questions, or assumptions.
 - If some details are missing, use "-" instead of inventing them.
 
-
 Structure the final PRD exactly like this:
 
 1. Background
@@ -33,116 +35,7 @@ Structure the final PRD exactly like this:
 - Why now: <rewrite and clarify>
 
 2. Problem Statement
-- What is the problem// ---- 1. Mapping: which fields belong to which doc type ----
-const fieldIdsByType = {
-  prd: [
-    "backgroundToday",
-    "backgroundWhyNow",
-    "problemStatement",
-    "problemUsers",
-    "objective",
-    "successMetrics",
-    "milestones",
-    "mbObjective",
-    "mbScope",
-    "mbOutOfScope",
-    "mbUserStories",
-    "mbAnalytics",
-    "mbRollout",
-    "mbRisks",
-    "openItems",
-  ],
-
-  mom: ["audience", "meetingNotes", "actionItems"],
-
-  onepager: [
-    "opContext",
-    "opObjective",
-    "opSuccessMetrics",
-    "opExpectedOutput",
-    "opRolloutStrategy",
-  ],
-
-  experiment: [
-    "expContext",
-    "hypothesis",
-    "metricsRaw",
-    "whatWorked",
-    "whatDidnt",
-    "decision",
-    "nextSteps",
-  ],
-};
-
-// ---- 2. Form sections in the DOM ----
-const docTypeSelect = document.getElementById("docType");
-const formSectionsByType = {
-  mom: document.getElementById("form-mom"),
-  prd: document.getElementById("form-prd"),
-  onepager: document.getElementById("form-onepager"),
-  experiment: document.getElementById("form-experiment"),
-};
-
-function updateVisibleForm() {
-  const type = docTypeSelect.value;
-
-  Object.entries(formSectionsByType).forEach(([key, el]) => {
-    if (!el) return;
-    if (key === type) {
-      el.classList.remove("hidden");
-    } else {
-      el.classList.add("hidden");
-    }
-  });
-}
-
-// Run once on load + whenever docType changes
-docTypeSelect.addEventListener("change", updateVisibleForm);
-updateVisibleForm();
-
-// ---- 3. Generate button handler ----
-const generateBtn = document.getElementById("generateBtn");
-const outputEl = document.getElementById("outputText");
-
-generateBtn.addEventListener("click", async () => {
-  const type = docTypeSelect.value;
-  const fieldIds = fieldIdsByType[type];
-
-  if (!fieldIds) {
-    outputEl.textContent = "Unknown document type.";
-    return;
-  }
-
-  // Collect answers from the visible form
-  const answers = {};
-  fieldIds.forEach((id) => {
-    const el = document.getElementById(id);
-    answers[id] = el ? el.value : "";
-  });
-
-  outputEl.textContent = "Generating…";
-
-  try {
-    const res = await fetch("http://localhost:3000/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ docType: type, answers }),
-    });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      outputEl.textContent = `Error from server: ${res.status}\n${errText}`;
-      return;
-    }
-
-    const data = await res.json();
-    outputEl.textContent = data.content || "(No content returned)";
-  } catch (err) {
-    console.error(err);
-    outputEl.textContent = "Error calling backend. Check server console.";
-  }
-});
-
+- What is the problem
 - Who experiences it (segments, surfaces, flows)
 
 3. Objective
