@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // FIELD DEFINITIONS
   // =======================
   const forms = {
+    // IDs unchanged for backward compatibility
     prd: [
       "backgroundToday",
       "backgroundWhyNow",
@@ -23,7 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
       "openItems",
     ],
 
-    mom: ["audience", "meetingNotes", "actionItems"],
+    // MoM now includes title + participants, but keeps old fields
+    mom: ["momTitle", "audience", "participants", "meetingNotes", "actionItems"],
 
     onepager: [
       "context",
@@ -42,6 +44,47 @@ document.addEventListener("DOMContentLoaded", () => {
       "decision",
       "nextSteps",
     ],
+  };
+
+  // Friendly labels for fields (EYD-ish, user-facing)
+  const labelMap = {
+    // PRD
+    backgroundToday: "Current Situation (today)",
+    backgroundWhyNow: "Why Now (context trigger)",
+    problemStatement: "Problem Statement",
+    problemUsers: "Target Users",
+    objective: "Objective",
+    successMetrics: "Success Metrics",
+    milestones: "Milestones",
+    mbObjective: "Milestone Objective",
+    mbScope: "Scope (in-scope)",
+    mbOutOfScope: "Out of Scope",
+    mbUserStories: "User Stories (raw)",
+    mbAnalytics: "Analytics / Clickstream Requirements",
+    mbRollout: "Rollout Strategy",
+    mbRisks: "Risks and Mitigation (raw)",
+    openItems: "Open Items / Questions",
+
+    // MoM
+    momTitle: "MoM Title (topic)",
+    audience: "Audience (who needs to read this)",
+    participants: "Participants (in the meeting)",
+    meetingNotes: "Meeting Notes (raw)",
+    actionItems: "Action Items (raw)",
+
+    // One-pager
+    context: "Context",
+    expectedOutput: "Expected Output",
+    rolloutStrategy: "Rollout Strategy",
+
+    // Experiment
+    expContext: "Experiment Context",
+    hypothesis: "Hypothesis",
+    metricsRaw: "Metrics (raw notes)",
+    whatWorked: "What Worked",
+    whatDidnt: "What Didn’t Work",
+    decision: "Decision",
+    nextSteps: "Next Steps",
   };
 
   const docTypeSelect = document.getElementById("docType");
@@ -66,7 +109,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!fieldList) return;
 
     fieldList.forEach((field) => {
-      const labelText = field.replace(/([A-Z])/g, " $1"); // camelCase → spaced
+      // If we know the label, use it; otherwise fall back to spaced camelCase
+      const fallbackLabel = field.replace(/([A-Z])/g, " $1");
+      const labelText = labelMap[field] || fallbackLabel;
 
       const div = document.createElement("div");
       div.className = "field";
