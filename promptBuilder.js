@@ -15,8 +15,10 @@ Style guidelines:
 - Use numbered section headings exactly as defined below.
 - Use "-" for bullet points where helpful.
 - You MAY use a simple Markdown table only in the “User Stories” subsection when requested.
-- Follow good Indonesian EYD-style capitalization: section titles capitalised, each sentence starts with a capital letter and ends with proper punctuation.
+- Follow good style capitalization: section titles capitalised, each sentence starts with a capital letter and ends with proper punctuation.
+- Ensure the result follows the input (i.e. if the input in English use the output in English) 
 - Never talk about yourself as an assistant or AI. Stay neutral and professional.
+- Keep proper nouns and acronyms unchanged (GoMart, VHS/HS, ATC%, CRM).
 
 Formatting rules for user stories:
 - Rewrite the user stories into a Markdown table.
