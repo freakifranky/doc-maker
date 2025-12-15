@@ -149,7 +149,7 @@ Style guidelines:
 - Summarise decisions, key points, and clear follow-ups. Skip noisy back-and-forth discussion unless it changes a decision.
 - Never refer to yourself as an assistant or AI. Never say "Franky to do" or "I/we as the model".
 - Use role- or name-based owners for action items (e.g., "Growth team", "PM", "BI", or specific names) when available; otherwise use "TBD".
-- Follow good Indonesian EYD-style capitalization: section titles capitalised, sentences start with capital letters and end with proper punctuation.
+- Follow good capitalization: section titles capitalised, sentences start with capital letters and end with proper punctuation.
 
 Use the fields below:
 - momTitle = topic or focus of the meeting.
@@ -206,7 +206,7 @@ Style guidelines:
 - Plain text only. Do NOT use '#' or '*' or Markdown formatting.
 - Concise, outcome-focused.
 - Use numbered headings exactly as defined below.
-- Follow good Indonesian/English EYD-style capitalization: titles capitalised, sentences start with capital letters.
+- Follow good capitalization: titles capitalised, sentences start with capital letters.
 - Never refer to yourself as an assistant or AI.
 
 Structure the final one-pager like this:
@@ -263,7 +263,7 @@ Style guidelines:
 - Plain text only. Do NOT use '#' or '*' or Markdown formatting.
 - Honest, concise, and focused on what we learned and what we will do next.
 - Use numbered headings exactly as defined below.
-- Follow good Indonesian/English EYD-style capitalization.
+- Follow good Indonesian/English capitalization.
 - Never refer to yourself as an assistant or AI.
 
 Structure the final document like this:
