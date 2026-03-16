@@ -32,7 +32,7 @@ export default function Home() {
 
   async function handleGenerate() {
     setLoading(true);
-    setStatus("Generating…");
+    setStatus("Talking to Claude\u2026");
     setOutput("");
 
     try {
@@ -53,11 +53,11 @@ export default function Home() {
 
       const data = await res.json();
       setOutput(data.content || "(No content returned)");
-      setStatus("Done!");
+      setStatus("Done! \u{1F389}");
 
       setTimeout(() => {
-        setStatus((prev) => (prev === "Done!" ? "" : prev));
-      }, 2500);
+        setStatus((prev) => (prev === "Done! \u{1F389}" ? "" : prev));
+      }, 3000);
     } catch (err) {
       console.error("Fetch error:", err);
       setOutput("Network error. Is the server running?");
@@ -71,7 +71,7 @@ export default function Home() {
     if (!output) return;
     try {
       await navigator.clipboard.writeText(output);
-      setStatus("Copied!");
+      setStatus("Copied! \u{1F4CB}");
       setTimeout(() => setStatus(""), 1500);
     } catch {
       if (outputRef.current) {
@@ -88,7 +88,7 @@ export default function Home() {
     if (!output) return;
 
     const docTitle = currentType
-      ? `${currentType.label} – ${currentType.description}`
+      ? `${currentType.label} \u2013 ${currentType.description}`
       : "Document";
 
     const html = `
@@ -119,40 +119,54 @@ export default function Home() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    setStatus("Downloaded!");
+    setStatus("Downloaded! \u{1F4E5}");
     setTimeout(() => setStatus(""), 1500);
   }, [output, currentType]);
+
+  const sectionKey = docType;
 
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Doc Maker</h1>
-        <span className="version-badge">v2</span>
+        <span className="header-icon">{"\u{270F}\u{FE0F}"}</span>
+        <h1>
+          Doc <span className="highlight">Maker</span>
+        </h1>
         <p className="app-subtitle">
-          Turn rough notes into polished product docs — powered by Claude.
+          Scribble your rough notes. Get polished docs. Powered by Claude.
         </p>
       </header>
 
-      <div className="doc-type-grid">
-        {DOC_TYPES.map((dt) => (
-          <button
-            key={dt.value}
-            className={`doc-type-chip ${docType === dt.value ? "active" : ""}`}
-            onClick={() => handleTypeChange(dt.value)}
-          >
-            {dt.label}
-          </button>
-        ))}
+      <div className="doc-type-section">
+        <div className="doc-type-label">What are we writing?</div>
+        <div className="doc-type-grid">
+          {DOC_TYPES.map((dt) => (
+            <button
+              key={dt.value}
+              className={`doc-type-chip ${
+                docType === dt.value ? "active" : ""
+              }`}
+              onClick={() => handleTypeChange(dt.value)}
+            >
+              {dt.emoji} {dt.label}
+            </button>
+          ))}
+        </div>
+        <p className="doc-type-description">{currentType?.description}</p>
       </div>
-      <p className="doc-type-description">{currentType?.description}</p>
 
       <main className="layout">
         <section className="card">
-          <div className="card-title">Inputs</div>
-          <div className="form-scroll">
+          <div className="card-title">
+            <span className="card-emoji">{"\u{1F4DD}"}</span> Inputs
+          </div>
+          <div className="form-scroll" key={sectionKey}>
             {sections.map((section) => (
               <div className="form-section" key={section.title}>
-                <div className="section-title">{section.title}</div>
+                <div className="section-title">
+                  <span className="section-emoji">{section.emoji}</span>
+                  {section.title}
+                </div>
                 {section.fields.map((field) => {
                   const fallback = field.replace(/([A-Z])/g, " $1");
                   const label = LABEL_MAP[field] || fallback;
@@ -183,13 +197,15 @@ export default function Home() {
             >
               {loading ? (
                 <span className="loading-dots">
-                  Generating<span>.</span><span>.</span><span>.</span>
+                  Generating<span>.</span>
+                  <span>.</span>
+                  <span>.</span>
                 </span>
               ) : (
-                "Generate"
+                "\u{2728} Generate"
               )}
             </button>
-            <span className={`status ${status === "Done!" ? "success" : ""}`}>
+            <span className={`status ${status.includes("Done") || status.includes("Copied") || status.includes("Downloaded") ? "success" : ""}`}>
               {status}
             </span>
           </div>
@@ -197,14 +213,16 @@ export default function Home() {
 
         <section className="card output-card">
           <div className="output-header">
-            <div className="card-title">Output</div>
+            <div className="card-title">
+              <span className="card-emoji">{"\u{1F4C4}"}</span> Output
+            </div>
             {output && (
               <div className="output-actions">
                 <button className="secondary-btn" onClick={handleCopy}>
-                  Copy
+                  {"\u{1F4CB}"} Copy
                 </button>
                 <button className="secondary-btn" onClick={handleDownload}>
-                  Download .doc
+                  {"\u{1F4E5}"} Download
                 </button>
               </div>
             )}
@@ -212,8 +230,9 @@ export default function Home() {
           <pre className="output-area" ref={outputRef}>
             {output || (
               <span className="output-placeholder">
-                Fill in the fields and hit Generate.{"\n"}Your document will
-                appear here.
+                <span className="placeholder-icon">{"\u{1F4AD}"}</span>
+                Fill in the fields and hit Generate.
+                {"\n"}Your polished document will appear here!
               </span>
             )}
           </pre>
@@ -221,7 +240,16 @@ export default function Home() {
       </main>
 
       <footer className="app-footer">
-        <p>Vibe-coded by @frnkygabriel</p>
+        <p>
+          Vibe-coded with {"\u{2615}"} by{" "}
+          
+            href="https://github.com/freakifranky"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            @frnkygabriel
+          </a>
+        </p>
       </footer>
     </div>
   );
