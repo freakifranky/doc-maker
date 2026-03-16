@@ -130,10 +130,10 @@ export default function Home() {
       <header className="app-header">
         <span className="header-icon">{"\u{270F}\u{FE0F}"}</span>
         <h1>
-          Doc <span className="highlight">Maker</span>
+          Doc <span className="highlight">Maker</span>v2
         </h1>
         <p className="app-subtitle">
-          Scribble your rough notes. Get polished docs. Powered by Claude.
+          Scribble your rough notes. Get polished docs. 
         </p>
       </header>
 
