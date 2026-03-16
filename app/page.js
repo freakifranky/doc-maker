@@ -240,17 +240,17 @@ export default function Home() {
       </main>
 
       <footer className="app-footer">
-        <p>
-          Vibe-coded with {"\u{2615}"} by{" "}
-          
-            href="https://github.com/freakifranky"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            @frnkygabriel
-          </a>
-        </p>
-      </footer>
+  <p>
+    Vibe-coded with {"\u{2615}"} by{" "}
+    <a
+      href="https://github.com/freakifranky"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      @frnkygabriel
+    </a>
+  </p>
+</footer>
     </div>
   );
 }
