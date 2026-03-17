@@ -1,3 +1,5 @@
+/* app/globals.css — "The Friendly Workshop" */
+
 :root {
   --cream: #faf6f1;
   --cream-dark: #f0ebe4;
@@ -31,6 +33,7 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 html { -webkit-font-smoothing: antialiased; }
 
 body {
@@ -41,6 +44,7 @@ body {
   position: relative;
 }
 
+/* Subtle grain overlay */
 body::before {
   content: "";
   position: fixed;
@@ -51,11 +55,15 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* ---- APP ---- */
+
 .app {
   max-width: 1200px;
   margin: 0 auto;
   padding: 32px 24px 80px;
 }
+
+/* ---- HEADER ---- */
 
 .app-header {
   text-align: center;
@@ -90,6 +98,8 @@ body::before {
   color: var(--ink-light);
   line-height: 1.5;
 }
+
+/* ---- DOC TYPE SELECTOR ---- */
 
 .doc-type-section {
   margin-bottom: 28px;
@@ -151,6 +161,8 @@ body::before {
   font-style: italic;
 }
 
+/* ---- LAYOUT ---- */
+
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
@@ -163,6 +175,8 @@ body::before {
   .layout { grid-template-columns: 1fr; }
 }
 
+/* ---- CARDS ---- */
+
 .card {
   background: var(--paper);
   border: 1px solid rgba(0,0,0,0.06);
@@ -172,7 +186,9 @@ body::before {
   transition: box-shadow 0.3s ease;
 }
 
-.card:hover { box-shadow: var(--shadow-lg); }
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
 
 .card-title {
   font-family: var(--font-display);
@@ -185,7 +201,11 @@ body::before {
   gap: 8px;
 }
 
-.card-title .card-emoji { font-size: 20px; }
+.card-title .card-emoji {
+  font-size: 20px;
+}
+
+/* ---- FORM ---- */
 
 .form-scroll {
   max-height: 68vh;
@@ -206,7 +226,10 @@ body::before {
   transition: transform 0.2s var(--bounce);
 }
 
-.form-section:hover { transform: translateY(-1px); }
+.form-section:hover {
+  transform: translateY(-1px);
+}
+
 .form-section:last-child { margin-bottom: 0; }
 
 .section-title {
@@ -222,7 +245,9 @@ body::before {
   gap: 6px;
 }
 
-.section-emoji { font-size: 15px; }
+.section-emoji {
+  font-size: 15px;
+}
 
 .field { margin-bottom: 10px; }
 .field:last-child { margin-bottom: 0; }
@@ -250,13 +275,18 @@ textarea {
   transition: all 0.2s ease;
 }
 
-textarea::placeholder { color: var(--ink-faint); font-size: 12px; }
+textarea::placeholder {
+  color: var(--ink-faint);
+  font-size: 12px;
+}
 
 textarea:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
+
+/* ---- BUTTONS ---- */
 
 button {
   font-family: var(--font-body);
@@ -282,7 +312,10 @@ button {
   box-shadow: 0 6px 24px var(--accent-glow);
 }
 
-.primary-btn:active:not(:disabled) { transform: translateY(0); }
+.primary-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
 .primary-btn:disabled { opacity: 0.5; cursor: default; }
 
 .secondary-btn {
@@ -302,6 +335,8 @@ button {
   box-shadow: var(--shadow-sm);
 }
 
+/* ---- ACTIONS ---- */
+
 .actions-row {
   display: flex;
   align-items: center;
@@ -312,6 +347,8 @@ button {
 .status { font-size: 13px; color: var(--ink-muted); font-weight: 500; }
 .status.success { color: var(--sage); }
 
+/* ---- OUTPUT ---- */
+
 .output-header {
   display: flex;
   align-items: center;
@@ -320,9 +357,135 @@ button {
 }
 
 .output-header .card-title { margin-bottom: 0; }
-.output-actions { display: flex; gap: 6px; }
+.output-actions { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
 
-.output-area {
+.action-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--cream-dark);
+  margin: 0 4px;
+}
+
+.toggle-btn {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--cream-dark);
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+  color: var(--ink-light);
+  border-color: var(--ink-faint);
+}
+
+.toggle-btn.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+/* Formatted output (rendered markdown) */
+.output-formatted {
+  padding: 20px;
+  background: var(--cream);
+  border: 1px solid rgba(0,0,0,0.04);
+  border-radius: var(--radius-sm);
+  max-height: 68vh;
+  overflow: auto;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+.output-formatted::-webkit-scrollbar { width: 5px; }
+.output-formatted::-webkit-scrollbar-track { background: transparent; }
+.output-formatted::-webkit-scrollbar-thumb { background: var(--ink-faint); border-radius: 4px; }
+
+.output-formatted h1,
+.output-formatted h2,
+.output-formatted h3 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
+.output-formatted h1 { font-size: 20px; font-weight: 700; }
+.output-formatted h2 { font-size: 16px; font-weight: 700; }
+.output-formatted h3 { font-size: 14px; font-weight: 600; }
+
+.output-formatted p {
+  margin-bottom: 10px;
+}
+
+.output-formatted ul,
+.output-formatted ol {
+  padding-left: 24px;
+  margin-bottom: 10px;
+}
+
+.output-formatted li {
+  margin-bottom: 4px;
+}
+
+.output-formatted strong {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* Table styles for rendered markdown */
+.output-formatted table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 12px;
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+}
+
+.output-formatted thead th {
+  background: var(--cream-dark);
+  font-weight: 700;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--ink-faint);
+  color: var(--ink);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.output-formatted tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  vertical-align: top;
+  color: var(--ink-light);
+}
+
+.output-formatted tbody tr:hover {
+  background: rgba(0,0,0,0.015);
+}
+
+.output-formatted tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* First column in 2-col tables (Category column in GTM) */
+.output-formatted tbody td:first-child {
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* Raw text output */
+.output-raw {
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.75;
@@ -337,28 +500,37 @@ button {
   color: var(--ink);
 }
 
-.output-area::-webkit-scrollbar { width: 5px; }
-.output-area::-webkit-scrollbar-track { background: transparent; }
-.output-area::-webkit-scrollbar-thumb { background: var(--ink-faint); border-radius: 4px; }
+.output-raw::-webkit-scrollbar { width: 5px; }
+.output-raw::-webkit-scrollbar-track { background: transparent; }
+.output-raw::-webkit-scrollbar-thumb { background: var(--ink-faint); border-radius: 4px; }
 
-.output-placeholder {
+/* Empty state */
+.output-empty {
+  padding: 48px 20px;
+  text-align: center;
   color: var(--ink-faint);
-  font-family: var(--font-body);
   font-style: italic;
   font-size: 14px;
-  text-align: center;
-  padding: 40px 20px;
 }
 
-.output-placeholder .placeholder-icon {
-  font-size: 32px;
+.output-empty .placeholder-icon {
+  font-size: 36px;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  font-style: normal;
 }
+
+.output-empty p {
+  margin: 4px 0;
+}
+
+/* ---- STICKY OUTPUT ---- */
 
 @media (min-width: 861px) {
   .output-card { position: sticky; top: 24px; }
 }
+
+/* ---- FOOTER ---- */
 
 .app-footer {
   margin-top: 48px;
@@ -372,6 +544,8 @@ button {
   text-decoration: none;
   font-weight: 600;
 }
+
+/* ---- ANIMATIONS ---- */
 
 @keyframes fadeInDown {
   from { opacity: 0; transform: translateY(-16px); }
@@ -403,12 +577,17 @@ button {
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-.form-section { animation: popIn 0.35s var(--bounce) both; }
+.form-section {
+  animation: popIn 0.35s var(--bounce) both;
+}
+
 .form-section:nth-child(1) { animation-delay: 0.05s; }
 .form-section:nth-child(2) { animation-delay: 0.1s; }
 .form-section:nth-child(3) { animation-delay: 0.15s; }
 .form-section:nth-child(4) { animation-delay: 0.2s; }
 .form-section:nth-child(5) { animation-delay: 0.25s; }
+
+/* ---- MOBILE ---- */
 
 @media (max-width: 600px) {
   .app { padding: 20px 14px 48px; }
