@@ -1,5 +1,4 @@
 import "./globals.css";
-import { Analytics } from '@vercel/analytics/next';
 
 export const metadata = {
   title: "Doc Maker v2",
@@ -21,10 +20,7 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body>
-        {children}
-        <Analytics />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
