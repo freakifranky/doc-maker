@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
+import { marked } from "marked";
 import {
   DOC_TYPES,
   FORM_SECTIONS,
@@ -8,22 +9,40 @@ import {
   PLACEHOLDER_MAP,
 } from "@/lib/formConfig";
 
+// Configure marked for tables and basic formatting
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+});
+
 export default function Home() {
   const [docType, setDocType] = useState("prd");
   const [answers, setAnswers] = useState({});
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
+  const [viewMode, setViewMode] = useState("formatted"); // "formatted" or "raw"
+  const [exporting, setExporting] = useState(false);
   const outputRef = useRef(null);
 
   const sections = FORM_SECTIONS[docType] || [];
   const currentType = DOC_TYPES.find((d) => d.value === docType);
+
+  const renderedHtml = useMemo(() => {
+    if (!output) return "";
+    try {
+      return marked(output);
+    } catch {
+      return output;
+    }
+  }, [output]);
 
   function handleTypeChange(value) {
     setDocType(value);
     setAnswers({});
     setOutput("");
     setStatus("");
+    setViewMode("formatted");
   }
 
   function handleFieldChange(field, value) {
@@ -34,6 +53,7 @@ export default function Home() {
     setLoading(true);
     setStatus("Talking to Claude\u2026");
     setOutput("");
+    setViewMode("formatted");
 
     try {
       const res = await fetch("/api/generate", {
@@ -84,44 +104,57 @@ export default function Home() {
     }
   }, [output]);
 
-  const handleDownload = useCallback(() => {
-    if (!output) return;
+  const handleDownloadDocx = useCallback(async () => {
+    if (!output || exporting) return;
+    setExporting(true);
+    setStatus("Generating .docx\u2026");
 
-    const docTitle = currentType
-      ? `${currentType.label} \u2013 ${currentType.description}`
+    const title = currentType
+      ? `${currentType.label} - ${currentType.description}`
       : "Document";
 
-    const html = `
-<html xmlns:o="urn:schemas-microsoft-com:office:office"
-      xmlns:w="urn:schemas-microsoft-com:office:word"
-      xmlns="http://www.w3.org/TR/REC-html40">
-<head>
-<meta charset="utf-8">
-<title>${docTitle}</title>
-<style>
-  body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; line-height: 1.6; color: #1a1a1a; margin: 1in; }
-  pre { font-family: Calibri, Arial, sans-serif; font-size: 11pt; white-space: pre-wrap; word-wrap: break-word; }
-</style>
-</head>
-<body>
-<pre>${output.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</pre>
-</body>
-</html>`.trim();
+    try {
+      const res = await fetch("/api/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: output, title }),
+      });
 
-    const blob = new Blob([html], { type: "application/msword" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    const fileName = `${currentType?.label || "doc"}-${new Date().toISOString().slice(0, 10)}.doc`;
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+      if (!res.ok) {
+        throw new Error("Export failed");
+      }
 
-    setStatus("Downloaded! \u{1F4E5}");
-    setTimeout(() => setStatus(""), 1500);
-  }, [output, currentType]);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${currentType?.label || "doc"}-${new Date().toISOString().slice(0, 10)}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setStatus("Downloaded! \u{1F4E5}");
+      setTimeout(() => setStatus(""), 1500);
+    } catch (err) {
+      console.error("Download error:", err);
+      // Fallback to .txt
+      const blob = new Blob([output], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${currentType?.label || "doc"}-${new Date().toISOString().slice(0, 10)}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setStatus("Downloaded as .txt (fallback)");
+      setTimeout(() => setStatus(""), 2000);
+    } finally {
+      setExporting(false);
+    }
+  }, [output, currentType, exporting]);
 
   const sectionKey = docType;
 
@@ -130,10 +163,10 @@ export default function Home() {
       <header className="app-header">
         <span className="header-icon">{"\u{270F}\u{FE0F}"}</span>
         <h1>
-          Doc <span className="highlight">Maker</span>v2
+          Doc <span className="highlight">Maker</span>
         </h1>
         <p className="app-subtitle">
-          Scribble your rough notes. Get polished docs. 
+          Scribble your rough notes. Get polished docs. Powered by Claude.
         </p>
       </header>
 
@@ -205,7 +238,15 @@ export default function Home() {
                 "\u{2728} Generate"
               )}
             </button>
-            <span className={`status ${status.includes("Done") || status.includes("Copied") || status.includes("Downloaded") ? "success" : ""}`}>
+            <span
+              className={`status ${
+                status.includes("Done") ||
+                status.includes("Copied") ||
+                status.includes("Downloaded")
+                  ? "success"
+                  : ""
+              }`}
+            >
               {status}
             </span>
           </div>
@@ -218,39 +259,67 @@ export default function Home() {
             </div>
             {output && (
               <div className="output-actions">
+                <button
+                  className={`toggle-btn ${viewMode === "formatted" ? "active" : ""}`}
+                  onClick={() => setViewMode("formatted")}
+                >
+                  Formatted
+                </button>
+                <button
+                  className={`toggle-btn ${viewMode === "raw" ? "active" : ""}`}
+                  onClick={() => setViewMode("raw")}
+                >
+                  Raw
+                </button>
+                <div className="action-divider" />
                 <button className="secondary-btn" onClick={handleCopy}>
                   {"\u{1F4CB}"} Copy
                 </button>
-                <button className="secondary-btn" onClick={handleDownload}>
-                  {"\u{1F4E5}"} Download
+                <button
+                  className="secondary-btn"
+                  onClick={handleDownloadDocx}
+                  disabled={exporting}
+                >
+                  {exporting ? "\u{23F3}" : "\u{1F4E5}"} .docx
                 </button>
               </div>
             )}
           </div>
-          <pre className="output-area" ref={outputRef}>
-            {output || (
-              <span className="output-placeholder">
-                <span className="placeholder-icon">{"\u{1F4AD}"}</span>
-                Fill in the fields and hit Generate.
-                {"\n"}Your polished document will appear here!
-              </span>
-            )}
-          </pre>
+
+          {output ? (
+            viewMode === "formatted" ? (
+              <div
+                className="output-formatted"
+                ref={outputRef}
+                dangerouslySetInnerHTML={{ __html: renderedHtml }}
+              />
+            ) : (
+              <pre className="output-raw" ref={outputRef}>
+                {output}
+              </pre>
+            )
+          ) : (
+            <div className="output-empty">
+              <span className="placeholder-icon">{"\u{1F4AD}"}</span>
+              <p>Fill in the fields and hit Generate.</p>
+              <p>Your polished document will appear here!</p>
+            </div>
+          )}
         </section>
       </main>
 
       <footer className="app-footer">
-  <p>
-    Vibe-coded with {"\u{2615}"} by{" "}
-    <a
-      href="https://github.com/freakifranky"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      @frnkygabriel
-    </a>
-  </p>
-</footer>
+        <p>
+          Vibe-coded with {"\u{2615}"} by{" "}
+          <a
+            href="https://github.com/freakifranky"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            @frnkygabriel
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }
