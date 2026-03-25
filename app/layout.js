@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Doc Maker – by Franky",
+  title: "Doc Maker",
   description: "Turn rough notes into polished product documents.",
 };
 
