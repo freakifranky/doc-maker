@@ -56,7 +56,6 @@ export default function Home() {
     setAnswers((prev) => ({ ...prev, [field]: value }));
   }
 
-  // Milestone handlers
   function addMilestone() {
     setMilestones((prev) => [...prev, DEFAULT_MILESTONE()]);
   }
@@ -77,7 +76,6 @@ export default function Home() {
     setOutput("");
     setViewMode("formatted");
 
-    // Build answers with milestones embedded
     const payload = { ...answers };
     if (docType === "prd") {
       payload._milestones = milestones;
@@ -206,12 +204,10 @@ export default function Home() {
       </div>
 
       <main className="layout">
-        {/* INPUT */}
         <section className="card">
           <div className="card-title"><span className="card-emoji">{"\u{1F4DD}"}</span> Inputs</div>
           <div className="form-scroll" key={docType}>
             {sections.map((section) => {
-              // Dynamic milestones section
               if (section.dynamic === "milestones") {
                 return (
                   <div key="milestones-container">
@@ -226,7 +222,6 @@ export default function Home() {
                             </button>
                           )}
                         </div>
-                        {/* Milestone title */}
                         <div className="field">
                           <label>Milestone Title</label>
                           <textarea
@@ -237,7 +232,6 @@ export default function Home() {
                             className="milestone-title-input"
                           />
                         </div>
-                        {/* Milestone fields */}
                         {MILESTONE_FIELDS.map((field) =>
                           renderField(
                             `${field}_${idx}`,
@@ -254,7 +248,6 @@ export default function Home() {
                 );
               }
 
-              // Regular section
               return (
                 <div className="form-section" key={section.title}>
                   <div className="section-title">
@@ -276,7 +269,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* OUTPUT */}
         <section className="card output-card">
           <div className="output-header">
             <div className="card-title"><span className="card-emoji">{"\u{1F4C4}"}</span> Output</div>
