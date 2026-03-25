@@ -1,4 +1,3 @@
-// app/api/export/route.js
 import {
   Document,
   Packer,
@@ -23,9 +22,7 @@ function parseContentToDocx(text, title) {
   while (i < lines.length) {
     const line = lines[i];
 
-    // Check if this is the start of a markdown table
     if (line.trim().startsWith("|") && i + 1 < lines.length && lines[i + 1].trim().match(/^\|[\s\-:|]+\|/)) {
-      // Parse markdown table
       const tableLines = [];
       while (i < lines.length && lines[i].trim().startsWith("|")) {
         tableLines.push(lines[i]);
@@ -36,7 +33,6 @@ function parseContentToDocx(text, title) {
       continue;
     }
 
-    // Numbered heading (e.g., "1. Current Situation" or "7.4 User Stories")
     const headingMatch = line.match(/^(\d+(?:\.\d+)?)\.\s+(.+)/);
     if (headingMatch) {
       const level = headingMatch[1].includes(".") ? HeadingLevel.HEADING_2 : HeadingLevel.HEADING_1;
@@ -51,7 +47,6 @@ function parseContentToDocx(text, title) {
       continue;
     }
 
-    // Section titles in all caps or bold-like patterns
     const sectionMatch = line.match(/^([A-Z][A-Za-z\s\/&]+(?:\([^)]+\))?)$/);
     if (sectionMatch && line.trim().length > 3 && line.trim().length < 80) {
       children.push(
@@ -65,9 +60,8 @@ function parseContentToDocx(text, title) {
       continue;
     }
 
-    // Bullet point
-    if (line.trim().startsWith("- ") || line.trim().startsWith("• ")) {
-      const bulletText = line.trim().replace(/^[-•]\s+/, "");
+    if (line.trim().startsWith("- ") || line.trim().startsWith("\u2022 ")) {
+      const bulletText = line.trim().replace(/^[-\u2022]\s+/, "");
       children.push(
         new Paragraph({
           children: [new TextRun({ text: bulletText, size: 22 })],
@@ -80,14 +74,12 @@ function parseContentToDocx(text, title) {
       continue;
     }
 
-    // Empty line
     if (line.trim() === "") {
       children.push(new Paragraph({ spacing: { after: 60 } }));
       i++;
       continue;
     }
 
-    // Regular paragraph
     children.push(
       new Paragraph({
         children: [new TextRun({ text: line, size: 22 })],
@@ -152,7 +144,6 @@ function parseContentToDocx(text, title) {
           },
         },
         children: [
-          // Title
           new Paragraph({
             heading: HeadingLevel.TITLE,
             children: [
@@ -160,7 +151,6 @@ function parseContentToDocx(text, title) {
             ],
             spacing: { after: 300 },
           }),
-          // Date
           new Paragraph({
             children: [
               new TextRun({
@@ -189,17 +179,14 @@ function parseMarkdownTable(tableLines) {
       .map((cell) => cell.trim());
 
   const headers = parseRow(tableLines[0]);
-  // Skip separator line (index 1)
   const rows = tableLines.slice(2).map(parseRow);
 
   const colCount = headers.length;
   if (colCount === 0) return null;
 
-  // Calculate column widths (total 9360 DXA for letter with 1" margins)
   const totalWidth = 9360;
   const colWidth = Math.floor(totalWidth / colCount);
   const columnWidths = Array(colCount).fill(colWidth);
-  // Adjust last column to make sum exact
   columnWidths[colCount - 1] = totalWidth - colWidth * (colCount - 1);
 
   const border = { style: BorderStyle.SINGLE, size: 1, color: "CCCCCC" };
@@ -219,7 +206,7 @@ function parseMarkdownTable(tableLines) {
             new TextRun({
               text: text || "",
               bold: isHeader,
-              size: isHeader ? 20 : 20,
+              size: 20,
               font: "Calibri",
             }),
           ],
